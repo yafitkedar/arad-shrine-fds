@@ -1,0 +1,131 @@
+&HEAD CHID='arad_shrine_X', TITLE='Arad shrine, Stratum X (8th c. BCE) - geometry after Herzog plan Fig.1' /
+
+---------------------------------------------------------------------------
+ Geometry digitised from Z. Herzog, "Perspectives on Southern Israel's Cult
+ Centralization: Arad and Beer-sheba", Fig. 1 (Plan of Arad Temple, Stratum X,
+ 5 m grid + scale bar), with object sizes from E. Arie, B. Rosen & D. Namdar,
+ "Cannabis and Frankincense at the Judahite Shrine of Arad", Tel Aviv 47 (2020).
+
+ Axes: +X = east, +Y = north, +Z = up.  Plan-to-model: x = E + 4.4, y = N + 3.0
+ (E/N in metres from the grid cross G-15/16 of Herzog's plan).
+
+ From the sources:
+   hall (hekal) interior  ~3.0 x 10.7 m on plan   (Arie: 10.50 x 2.70/3.10)
+   benches on W and S sides of hall (Stratum X)  ~0.6-0.7 m wide on plan
+   cella (debir) interior ~1.1 m (N-S) on plan, 3 stairs from hall, floor ~0.3 m
+     above hall (73.3 vs 73.00 m elevations)
+   altars lying on 2nd stair: N altar 52 cm high, top 29.7x29.7 cm (frankincense)
+                              S altar 40 cm high, top 20x21 cm   (cannabis)
+   red massebah in cella; raised platform in NW part of cella (+30 cm)
+   sacrificial altar 2.20 x 2.40 m, top ~1.2 m above court (74.23 vs ~73.0)
+   storage area north of the court; court entrance in the SE
+ Assumed (not in sources): wall heights, roofs, door heights, fortress walls
+ drawn only as context.
+---------------------------------------------------------------------------
+
+ Fine 0.1 m mesh around the cella; 0.2 m elsewhere. Meshes abut, no overlap.
+&MESH ID='F_cella', IJK=40,40,44,  XB=1.0,5.0,   4.0,8.0,  0.0,4.4, MPI_PROCESS=0 /
+&MESH ID='C_south', IJK=108,20,22, XB=0.0,21.6,  0.0,4.0,  0.0,4.4, MPI_PROCESS=1 /
+&MESH ID='C_NW',    IJK=54,35,22,  XB=0.0,10.8,  8.0,15.0, 0.0,4.4, MPI_PROCESS=2 /
+&MESH ID='C_NE',    IJK=54,35,22,  XB=10.8,21.6, 8.0,15.0, 0.0,4.4, MPI_PROCESS=3 /
+&MESH ID='C_W',     IJK=5,20,22,   XB=0.0,1.0,   4.0,8.0,  0.0,4.4, MPI_PROCESS=4 /
+&MESH ID='C_E',     IJK=83,20,22,  XB=5.0,21.6,  4.0,8.0,  0.0,4.4, MPI_PROCESS=4 /
+
+&TIME T_END=30.0 /
+&MISC TMPA=30.0 /
+
+&REAC FUEL='WOOD', C=1.0, H=1.7, O=0.74, SOOT_YIELD=0.015, HEAT_OF_COMBUSTION=17000.0 /
+
+ ---------------- surfaces / colors ----------------
+&SURF ID='FIELDSTONE', RGB=176,156,120 /
+&SURF ID='MUDBRICK',   RGB=196,160,112 /
+&SURF ID='FORTRESS',   RGB=140,126,104, TRANSPARENCY=0.6 /
+&SURF ID='PLASTER',    RGB=232,224,204 /
+&SURF ID='LIMESTONE',  RGB=226,216,188 /
+&SURF ID='RED_STONE',  RGB=168,52,40 /
+&SURF ID='ALTAR',      RGB=128,112,88 /
+&SURF ID='FLINT',      RGB=90,84,78 /
+&SURF ID='ROOF',       RGB=120,88,56, TRANSPARENCY=0.25 /
+&SURF ID='EARTH',      RGB=210,190,150 /
+&SURF ID='ALTAR_FIRE', HRRPUA=250.0, TAU_Q=-5.0, RGB=255,80,0 /   0.64 m2 -> 160 kW
+&SURF ID='INCENSE',    HRRPUA=30.0,  TAU_Q=-3.0, RGB=255,140,0 /  ~1-3 kW
+
+&VENT MB='ZMIN', SURF_ID='EARTH' /
+&VENT MB='XMAX', SURF_ID='OPEN' /
+&VENT MB='YMIN', SURF_ID='OPEN' /
+&VENT MB='ZMAX', SURF_ID='OPEN' /
+
+ ---------------- fortress walls (context only, semi-transparent) ----------------
+&OBST ID='Fortress_W', XB=0.0,1.2, 0.0,13.6, 0.0,4.0, SURF_ID='FORTRESS' /
+&OBST ID='Fortress_N', XB=0.0,21.6, 13.6,15.0, 0.0,4.0, SURF_ID='FORTRESS' /
+
+ ---------------- main hall (hekal): interior x 4.2-7.2, y 1.1-11.8 ----------------
+&OBST ID='Hall_W_stone', XB=3.6,4.2, 0.3,12.6, 0.0,1.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Hall_W_brick', XB=3.6,4.2, 0.3,12.6, 1.0,3.0, SURF_ID='MUDBRICK' /
+&OBST ID='Hall_E_stone', XB=7.2,8.2, 0.3,12.6, 0.0,1.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Hall_E_brick', XB=7.2,8.2, 0.3,12.6, 1.0,3.0, SURF_ID='MUDBRICK' /
+&OBST ID='Hall_S_stone', XB=4.2,7.2, 0.3,1.1,  0.0,1.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Hall_S_brick', XB=4.2,7.2, 0.3,1.1,  1.0,3.0, SURF_ID='MUDBRICK' /
+&OBST ID='Hall_N_stone', XB=4.2,7.2, 11.8,12.6, 0.0,1.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Hall_N_brick', XB=4.2,7.2, 11.8,12.6, 1.0,3.0, SURF_ID='MUDBRICK' /
+&OBST ID='Hall_roof',    XB=3.6,8.2, 0.3,12.6,  3.0,3.2, SURF_ID='ROOF' /
+
+ plastered benches, Stratum X: along the S wall and the S part of the W wall
+&OBST ID='Bench_S', XB=4.2,7.2, 1.1,1.8, 0.0,0.4, SURF_ID='PLASTER' /
+&OBST ID='Bench_W', XB=4.2,4.8, 1.8,4.2, 0.0,0.4, SURF_ID='PLASTER' /
+
+ plastered installation against the E wall, N of the entrance (on plan; function unclear)
+&OBST ID='Installation_E', XB=6.6,7.2, 6.7,8.6, 0.0,0.5, SURF_ID='PLASTER' /
+
+ hall entrance from the court (E wall), cella opening (W wall)
+&HOLE XB=7.2,8.2, 5.2,6.5, 0.0,2.2 /
+&HOLE XB=3.6,4.2, 5.5,6.6, 0.0,2.2 /
+
+ ---------------- cella (debir): interior x 2.4-3.6, y 5.5-6.6 ----------------
+&OBST ID='Cella_W', XB=1.8,2.4, 4.9,7.1, 0.0,2.4, SURF_ID='FIELDSTONE' /
+&OBST ID='Cella_S', XB=2.4,3.6, 4.9,5.5, 0.0,2.4, SURF_ID='FIELDSTONE' /
+&OBST ID='Cella_N', XB=2.4,3.6, 6.6,7.1, 0.0,2.4, SURF_ID='FIELDSTONE' /
+&OBST ID='Cella_roof', XB=1.8,3.6, 4.9,7.1, 2.4,2.6, SURF_ID='ROOF' /
+
+ three stairs up from the hall (0.1 / 0.2 / 0.3 m); the 3rd is the cella pavement
+&OBST ID='Stair_1',     XB=4.2,4.5, 5.5,6.6, 0.0,0.1, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&OBST ID='Stair_2',     XB=3.9,4.2, 5.5,6.6, 0.0,0.2, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&OBST ID='Cella_floor', XB=2.4,3.9, 5.5,6.6, 0.0,0.3, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+
+ raised platform (upper floor, +30 cm) in the NW part of the cella
+&OBST ID='Platform_NW', XB=2.4,3.0, 6.0,6.6, 0.3,0.6, SURF_ID='LIMESTONE' /
+ red-painted massebah, shown standing south of the platform (found fallen there)
+&OBST ID='Massebah_red', XB=2.4,2.6, 5.6,6.0, 0.3,1.2, SURF_ID='RED_STONE' /
+
+ the two altars on the 2nd stair, one at each end
+&OBST ID='Altar_N_frankincense', XB=3.9,4.2, 6.3,6.6, 0.2,0.7, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&OBST ID='Altar_S_cannabis',     XB=4.0,4.2, 5.5,5.7, 0.2,0.6, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&VENT XB=3.9,4.2, 6.3,6.6, 0.7,0.7, SURF_ID='INCENSE' /
+&VENT XB=4.0,4.2, 5.5,5.7, 0.6,0.6, SURF_ID='INCENSE' /
+
+ ---------------- court (haser) and storage area ----------------
+&OBST ID='Court_S', XB=8.2,21.2,  0.3,1.1,  0.0,2.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Court_E', XB=20.6,21.2, 1.1,12.2, 0.0,2.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Court_N', XB=8.2,20.6,  8.7,9.3,  0.0,2.0, SURF_ID='FIELDSTONE' /   court / storage partition
+&OBST ID='Store_N', XB=8.2,20.6,  11.6,12.2, 0.0,2.0, SURF_ID='FIELDSTONE' /
+&HOLE XB=20.6,21.2, 1.7,3.2, 0.0,2.0 /   court entrance (SE)
+&HOLE XB=18.0,18.8, 8.7,9.3, 0.0,2.0 /   door to the storage area
+
+ sacrificial altar, 2.4 (E-W) x 2.2 (N-S) m, top 1.2 m; flint slab on top
+&OBST ID='Sacrificial_altar', XB=13.0,15.4, 6.4,8.6, 0.0,1.2, SURF_ID='ALTAR' /
+&OBST ID='Altar_ledge_W',     XB=12.6,13.0, 6.4,8.6, 0.0,0.4, SURF_ID='ALTAR' /
+&OBST ID='Altar_flint_top',   XB=13.6,14.8, 7.0,8.0, 1.2,1.3, SURF_ID='FLINT' /
+&VENT XB=13.8,14.6, 7.1,7.9, 1.3,1.3, SURF_ID='ALTAR_FIRE' /
+ plastered strip on the south side of the altar (locus 394)
+&OBST ID='Plaster_394', XB=13.2,15.4, 6.0,6.4, 0.0,0.1, SURF_ID='PLASTER' /
+
+ ---------------- outputs ----------------
+&DEVC ID='T_hall',  QUANTITY='TEMPERATURE', XYZ=5.7,6.0,2.5 /
+&DEVC ID='T_cella', QUANTITY='TEMPERATURE', XYZ=3.0,6.0,1.8 /
+&DEVC ID='T_above_altar', QUANTITY='TEMPERATURE', XYZ=14.2,7.5,3.5 /
+
+&SLCF PBY=6.0, QUANTITY='TEMPERATURE', VECTOR=.TRUE. /   E-W axis: cella - hall - entrance
+&SLCF PBY=7.5, QUANTITY='TEMPERATURE' /                  through the sacrificial altar
+&SLCF PBZ=1.5, QUANTITY='TEMPERATURE' /
+
+&TAIL /

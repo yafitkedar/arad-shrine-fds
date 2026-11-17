@@ -1,0 +1,167 @@
+&HEAD CHID='arad_r60_low_swap', TITLE='Arad shrine Str. X - 60 min ritual, 20 g cannabis per 10 min, 5 cm altar mesh, LOW: hall 2.4 m, cella niche 1.8 m, door 2.2 m - altars SWAPPED: cannabis 50 cm, frankincense 40 cm' /
+
+---------------------------------------------------------------------------
+ Enhanced run (follows the 4-scenario sensitivity study):
+   * cannabis 2 g/min (20 g per 10 min, 120 g over the hour), 5% THC, 50% released
+     -> THC 50 mg/min.  Frankincense unchanged (0.5 g/min).
+   * 60 min ritual
+   * 5 cm mesh around the altars, 10 cm cella + area in front of the altars,
+     20 cm far hall and court (court cut at x = 13 m, open there)
+   * new receptors: priest leaning over each altar, kneeling, standing on stair 2
+ LOW variant: hall ceiling 2.4 m, cella = niche 1.8 m above hall floor, door 2.2 m (cf. arad_low.fds).
+ Mesh interfaces are kept off wall faces that carry a HOLE (blocked species transport).
+---------------------------------------------------------------------------
+
+ 5 cm: altars, stairs and cella opening (split in two along y)
+&MESH ID='A5_S', IJK=28,18,32, XB=3.4,4.8, 5.2,6.1, 0.0,1.6, MPI_PROCESS=0 /
+&MESH ID='A5_N', IJK=28,18,32, XB=3.4,4.8, 6.1,7.0, 0.0,1.6, MPI_PROCESS=1 /
+ 10 cm: cella, column above the altars, area in front of the altars
+&MESH ID='Cella', IJK=16,24,24, XB=1.8,3.4, 4.8,7.2, 0.0,2.4, MPI_PROCESS=2 /
+&MESH ID='N_d',   IJK=14,18,8,  XB=3.4,4.8, 5.2,7.0, 1.6,2.4, MPI_PROCESS=2 /
+&MESH ID='N_a',   IJK=28,16,24, XB=3.4,6.2, 3.6,5.2, 0.0,2.4, MPI_PROCESS=3 /
+&MESH ID='H_S',   IJK=26,17,12, XB=3.4,8.6, 0.2,3.6, 0.0,2.4, MPI_PROCESS=3 /
+&MESH ID='N_b',   IJK=28,14,24, XB=3.4,6.2, 7.0,8.4, 0.0,2.4, MPI_PROCESS=4 /
+&MESH ID='N_c',   IJK=14,18,24, XB=4.8,6.2, 5.2,7.0, 0.0,2.4, MPI_PROCESS=4 /
+ 20 cm: rest of the hall, court
+&MESH ID='H_N',   IJK=26,21,12, XB=3.4,8.6, 8.4,12.6, 0.0,2.4, MPI_PROCESS=5 /
+&MESH ID='H_E',   IJK=12,24,12, XB=6.2,8.6, 3.6,8.4, 0.0,2.4, MPI_PROCESS=5 /
+&MESH ID='Court1', IJK=11,62,20, XB=8.6,10.8, 0.2,12.6, 0.0,4.0, MPI_PROCESS=5 /
+&MESH ID='Court2', IJK=11,62,20, XB=10.8,13.0, 0.2,12.6, 0.0,4.0, MPI_PROCESS=6 /
+
+&TIME T_END=3600.0 /
+&MISC TMPA=25.0 /
+&DUMP DT_DEVC=2.0, NFRAMES=720 /
+
+&REAC FUEL='WOOD', C=1.0, H=1.7, O=0.74, SOOT_YIELD=0.0, HEAT_OF_COMBUSTION=15000.0 /
+
+&SPEC ID='THC',          FORMULA='C21H30O2' /
+&SPEC ID='PINENE',       FORMULA='C10H16' /
+&SPEC ID='INCENSOLE_AC', FORMULA='C22H38O4' /
+&SPEC ID='SMOKE_PM',     FORMULA='C20H40', MASS_EXTINCTION_COEFFICIENT=4400.0 /
+
+ Source terms on 0.1 x 0.1 m heaps (0.01 m2), kg/m2/s
+   S altar: dung 1 g/min + cannabis 2 g/min (partly burning) -> ~0.5 kW
+            THC 2 g/min x 5% x 50% = 50 mg/min = 8.33e-7 kg/s
+            PM: dung 20 mg/min + cannabis 40 g/kg x 2 g/min = 80 -> 100 mg/min
+   N altar: unchanged (frankincense 0.5 g/min on animal fat, 0.33 kW)
+&SURF ID='CANNABIS_DUNG', HRRPUA=50.0, TAU_Q=-30.0, RGB=200,120,40,
+      SPEC_ID='THC','SMOKE_PM', MASS_FLUX=8.33E-5,1.667E-4, TAU_MF=-30.0,-30.0 /
+&SURF ID='FRANK_FAT', HRRPUA=33.0, TAU_Q=-30.0, RGB=255,200,60,
+      SPEC_ID='PINENE','INCENSOLE_AC','SMOKE_PM', MASS_FLUX=5.8E-5,4.2E-6,3.75E-5, TAU_MF=-30.0,-30.0,-30.0 /
+
+&SURF ID='FIELDSTONE', RGB=176,156,120 /
+&SURF ID='MUDBRICK',   RGB=196,160,112 /
+&SURF ID='PLASTER',    RGB=232,224,204 /
+&SURF ID='LIMESTONE',  RGB=226,216,188 /
+&SURF ID='RED_STONE',  RGB=168,52,40 /
+&SURF ID='EARTH',      RGB=210,190,150 /
+
+&VENT MB='ZMIN', SURF_ID='EARTH' /
+ open boundaries on the court meshes only (MB='ZMAX' would open every mesh top)
+&VENT ID='Court_sky',  XB=8.6,13.0, 0.2,12.6, 4.0,4.0, SURF_ID='OPEN' /
+&VENT ID='Court_east', XB=13.0,13.0, 0.2,12.6, 0.0,4.0, SURF_ID='OPEN' /
+
+ ---------------- hall ----------------
+&OBST ID='Hall_W_stone', XB=3.6,4.2, 0.2,12.6, 0.0,1.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Hall_W_brick', XB=3.6,4.2, 0.2,12.6, 1.0,2.4, SURF_ID='MUDBRICK' /
+&OBST ID='Hall_E_stone', XB=7.2,8.2, 0.2,12.6, 0.0,1.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Hall_E_brick', XB=7.2,8.2, 0.2,12.6, 1.0,2.4, SURF_ID='MUDBRICK' /
+&OBST ID='Hall_S_stone', XB=4.2,7.2, 0.2,1.1,  0.0,1.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Hall_S_brick', XB=4.2,7.2, 0.2,1.1,  1.0,2.4, SURF_ID='MUDBRICK' /
+&OBST ID='Hall_N_stone', XB=4.2,7.2, 11.8,12.6, 0.0,1.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Hall_N_brick', XB=4.2,7.2, 11.8,12.6, 1.0,2.4, SURF_ID='MUDBRICK' /
+&OBST ID='Bench_S', XB=4.2,7.2, 1.1,1.8, 0.0,0.4, SURF_ID='PLASTER' /
+&OBST ID='Bench_W', XB=4.2,4.8, 1.8,4.2, 0.0,0.4, SURF_ID='PLASTER' /
+&OBST ID='Installation_E', XB=6.6,7.2, 6.7,8.6, 0.0,0.5, SURF_ID='PLASTER' /
+&HOLE XB=7.2,8.2, 5.2,6.5, 0.0,2.2 /    hall door 1.3 x 2.2 m
+&HOLE XB=3.6,4.2, 5.5,6.6, 0.0,1.8 /    cella opening = full niche height
+
+ ---------------- cella ----------------
+&OBST ID='Cella_W', XB=1.8,2.4, 4.8,7.2, 0.0,2.4, SURF_ID='FIELDSTONE' /
+&OBST ID='Cella_S', XB=2.4,3.6, 4.8,5.5, 0.0,2.4, SURF_ID='FIELDSTONE' /
+&OBST ID='Cella_N', XB=2.4,3.6, 6.6,7.2, 0.0,2.4, SURF_ID='FIELDSTONE' /
+&OBST ID='Cella_roof', XB=2.4,3.6, 5.5,6.6, 1.8,2.4, SURF_ID='MUDBRICK' /
+&OBST ID='Stair_1',     XB=4.2,4.5, 5.5,6.6, 0.0,0.1, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&OBST ID='Stair_2',     XB=3.9,4.2, 5.5,6.6, 0.0,0.2, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&OBST ID='Cella_floor', XB=2.4,3.9, 5.5,6.6, 0.0,0.3, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&OBST ID='Platform_NW', XB=2.4,3.0, 6.0,6.6, 0.3,0.6, SURF_ID='LIMESTONE' /
+&OBST ID='Massebah_red', XB=2.4,2.6, 5.6,6.0, 0.3,1.2, SURF_ID='RED_STONE' /
+
+ altars at true size on the 5 cm grid (N 29.7 cm sq x 52 cm; S 20x21 cm x 40 cm)
+&OBST ID='Altar_N_frankincense', XB=3.90,4.20, 6.30,6.60, 0.2,0.60, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&OBST ID='Altar_S_cannabis',     XB=4.00,4.20, 5.50,5.70, 0.2,0.70, SURF_ID='LIMESTONE', PERMIT_HOLE=.FALSE. /
+&VENT XB=4.00,4.10, 6.40,6.50, 0.60,0.60, SURF_ID='FRANK_FAT' /
+&VENT XB=4.05,4.15, 5.55,5.65, 0.70,0.70, SURF_ID='CANNABIS_DUNG' /
+
+ ---------------- court ----------------
+&OBST ID='Court_S', XB=8.2,13.0, 0.2,1.1,  0.0,2.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Court_N', XB=8.2,13.0, 8.7,9.3,  0.0,2.0, SURF_ID='FIELDSTONE' /
+&OBST ID='Store_N', XB=8.2,13.0, 11.6,12.6, 0.0,2.0, SURF_ID='FIELDSTONE' /
+
+ ---------------- receptors (breathing zone) ----------------
+ P1 priest standing in front of the altars   P2 inside the cella (standing on cella floor)
+ P3 hall centre   P4 S bench seated   P5 W bench seated   P6 N end   P7 doorway   P8 court
+ P9  priest leaning over the cannabis altar (face 0.4 m above the heap, 0.3 m east)
+ P10 priest leaning over the frankincense altar
+ P11 priest kneeling in front of the altars
+ P12 priest standing on stair 2 between the altars (in the cella opening)
+&DEVC ID='P1_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=4.65,6.05,1.55, CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P2_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=3.0,6.05,1.50,  CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P3_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=5.7,6.05,1.55,  CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P4_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=5.7,1.5,1.2,    CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P5_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=4.5,3.0,1.2,    CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P6_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=5.7,10.5,1.55,  CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P7_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=7.7,5.9,1.55,   CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P8_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=11.0,5.9,1.55,  CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P9_THC',  QUANTITY='DENSITY', SPEC_ID='THC', XYZ=4.425,5.625,1.0,  CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P10_THC', QUANTITY='DENSITY', SPEC_ID='THC', XYZ=4.425,6.475,1.1,  CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P11_THC', QUANTITY='DENSITY', SPEC_ID='THC', XYZ=4.775,6.025,0.95, CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P12_THC', QUANTITY='DENSITY', SPEC_ID='THC', XYZ=4.05,6.05,1.75,   CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+
+&DEVC ID='P1_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=4.65,6.05,1.55, CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P2_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=3.0,6.05,1.50,  CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P3_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=5.7,6.05,1.55,  CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P4_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=5.7,1.5,1.2,    CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P5_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=4.5,3.0,1.2,    CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P6_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=5.7,10.5,1.55,  CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P7_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=7.7,5.9,1.55,   CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P8_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=11.0,5.9,1.55,  CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P9_PIN',  QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=4.425,5.625,1.0,  CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P10_PIN', QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=4.425,6.475,1.1,  CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P11_PIN', QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=4.775,6.025,0.95, CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+&DEVC ID='P12_PIN', QUANTITY='VOLUME FRACTION', SPEC_ID='PINENE', XYZ=4.05,6.05,1.75,   CONVERSION_FACTOR=1.0E9, UNITS='ppb' /
+
+&DEVC ID='P9_INC',  QUANTITY='DENSITY', SPEC_ID='INCENSOLE_AC', XYZ=4.425,5.625,1.0, CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P10_INC', QUANTITY='DENSITY', SPEC_ID='INCENSOLE_AC', XYZ=4.425,6.475,1.1, CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P2_INC',  QUANTITY='DENSITY', SPEC_ID='INCENSOLE_AC', XYZ=3.0,6.05,1.50,   CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+&DEVC ID='P3_INC',  QUANTITY='DENSITY', SPEC_ID='INCENSOLE_AC', XYZ=5.7,6.05,1.55,   CONVERSION_FACTOR=1.0E6, UNITS='mg/m3' /
+
+&DEVC ID='P1_VIS',  QUANTITY='VISIBILITY', XYZ=4.65,6.05,1.55 /
+&DEVC ID='P2_VIS',  QUANTITY='VISIBILITY', XYZ=3.0,6.05,1.50 /
+&DEVC ID='P3_VIS',  QUANTITY='VISIBILITY', XYZ=5.7,6.05,1.55 /
+&DEVC ID='P9_VIS',  QUANTITY='VISIBILITY', XYZ=4.425,5.625,1.0 /
+
+&DEVC ID='P9_T',  QUANTITY='TEMPERATURE', XYZ=4.425,5.625,1.0 /
+&DEVC ID='P10_T', QUANTITY='TEMPERATURE', XYZ=4.425,6.475,1.1 /
+&DEVC ID='T_above_S_altar', QUANTITY='TEMPERATURE', XYZ=4.10,5.60,0.75 /
+&DEVC ID='T_above_N_altar', QUANTITY='TEMPERATURE', XYZ=4.05,6.45,0.75 /
+&DEVC ID='T_ceiling_hall',  QUANTITY='TEMPERATURE', XYZ=5.7,6.05,2.3 /
+&DEVC ID='T_cella',         QUANTITY='TEMPERATURE', XYZ=3.0,6.05,1.7 /
+
+&DEVC ID='THC_in_hall',  QUANTITY='DENSITY', SPEC_ID='THC', XB=4.2,7.2,1.1,11.8,0.0,2.4, SPATIAL_STATISTIC='VOLUME INTEGRAL', CONVERSION_FACTOR=1.0E6, UNITS='mg' /
+&DEVC ID='THC_in_cella', QUANTITY='DENSITY', SPEC_ID='THC', XB=2.4,4.2,5.5,6.6,0.0,1.8, SPATIAL_STATISTIC='VOLUME INTEGRAL', CONVERSION_FACTOR=1.0E6, UNITS='mg' /
+&DEVC ID='THC_out_door', QUANTITY='MASS FLOW +', SPEC_ID='THC', XB=7.7,7.7,5.2,6.6,0.0,2.2, CONVERSION_FACTOR=1.0E6, UNITS='mg/s' /
+&DEVC ID='Air_out_door', QUANTITY='VOLUME FLOW +', XB=7.7,7.7,5.2,6.6,0.0,2.2, UNITS='m3/s' /
+&DEVC ID='Air_in_door',  QUANTITY='VOLUME FLOW -', XB=7.7,7.7,5.2,6.6,0.0,2.2, UNITS='m3/s' /
+
+ ---------------- slices ----------------
+&SLCF PBY=6.05, QUANTITY='TEMPERATURE', VECTOR=.TRUE. /
+&SLCF PBY=6.05, QUANTITY='DENSITY', SPEC_ID='THC' /
+&SLCF PBY=5.625, QUANTITY='DENSITY', SPEC_ID='THC' /     through the cannabis altar
+&SLCF PBY=6.05, QUANTITY='DENSITY', SPEC_ID='PINENE' /
+&SLCF PBZ=1.55, QUANTITY='DENSITY', SPEC_ID='THC' /
+&SLCF PBZ=1.0,  QUANTITY='DENSITY', SPEC_ID='THC' /      leaning / kneeling height
+&SLCF PBZ=1.55, QUANTITY='DENSITY', SPEC_ID='PINENE' /
+&SLCF PBZ=1.55, QUANTITY='VISIBILITY' /
+
+&TAIL /
